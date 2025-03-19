@@ -11,7 +11,7 @@ services:
       - --innodb_force_recovery=0
       - --default_time_zone=America/Sao_Paulo
     volumes: 
-      - C:\Users\j4p4_\Documents\Projetos\Base-de-dados-SQL\mysql:/var/lib/mysql
+      - ./mysql:/var/lib/mysql # Mapear diretório local 'mysql' para o volume do MySQL
     ports:
       - 3306:3306
     environment:
