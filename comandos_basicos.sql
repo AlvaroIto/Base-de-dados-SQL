@@ -36,8 +36,72 @@ select * from users where id in (1, 5, 10, 50, 100);
 -- _ um caractere
 select * from users where first_name like '%o';
 
--- 
+-- order by ordernar por
 select id, first_name, email 
 from users 
-where id beteween 10 and 50
-order by id asc 
+where id between 10 and 50
+order by first_name asc;
+
+-- limit limita a quantidade de valores
+-- offset desloca o cursor para exibir os resultados
+select id, first_name, email 
+from users 
+where id between 10 and 50
+order by id asc
+limit 3 offset 3;
+
+-- insert select insere valores em uma tabela usando outra
+insert into profiles
+(bio, description , user_id)
+select concat('Bio de ', first_name),concat('Description de ', first_name), id from users;
+
+-- delete apaga registros da tabela
+delete from users where id = 14;
+select * from users where id between 10 and 15;
+
+-- update atualiza dados na basee de dados
+update users set first_name = 'Iacomo', last_name = 'Kid' where id = 19;
+select * from users  where id = 19;
+
+-- select com tabelas diferentes
+select u.id as uid, p.id as pid, p.bio, u.first_name
+from users as u, profiles as p
+where u.id = p.user_id;
+
+-- rand e round
+select round(rand() * 10000, 2);
+update users set salary = round(rand() * 10000, 2);
+
+-- preencher campos tabela roles
+insert into roles (name) values ('POST'), ('PUT'), ('DELETE'), ('GET');
+-- preencher tabela users_roles (pegar cada usuário e atribuir uma role aleatoria)
+-- adiciona um dado especifico
+insert into user_roles (user_id, role_id)
+values (18, 4);
+-- inserir varios dados
+insert into user_roles (user_id, role_id) 
+select id, (select id from roles order by rand() limit 1) as qualquer from users;
+-- insert ignore
+insert ignore into user_roles (user_id, role_id) 
+select id, (select id from roles order by rand() limit 1) as qualquer from users order BY  rand() limit 5;
+
+-- selecionar usuario, a role e o perfil (3 tabelas diferentes)
+select 
+u.id as uid, u.first_name, p.bio, r.name as role_name
+from users as u
+left join profiles as p on u.id = p.user_id
+inner join user_roles as ur on u.id = ur.user_id
+inner join roles as r on ur.role_id = r.id
+order by uid asc;
+
+-- update com join
+select u.first_name, p.bio from users as u
+join profiles p
+on p.user_id = u.id
+where u.first_name = 'Keelie';
+
+update users as u
+join profiles p
+on p.user_id = u.id
+set p.bio = concat (p.bio, ' atualizado')
+where u.first_name = 'Keelie';
